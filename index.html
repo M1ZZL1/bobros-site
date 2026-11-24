@@ -15,9 +15,14 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
+        ::selection {
+            background: rgba(247, 129, 102, 0.3);
+            color: #ffffff;
+        }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 0%, rgba(247, 129, 102, 0.08) 0%, transparent 55%);
             color: var(--text);
             line-height: 1.6;
         }
@@ -30,8 +35,25 @@
             align-items: center;
             border-bottom: 1px solid var(--border);
         }
-        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
         .logo span { color: var(--accent); }
+        .beaver-icon {
+            width: 34px;
+            height: 34px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 6px rgba(247, 129, 102, 0.25));
+            transition: transform 0.25s ease;
+        }
+        .logo:hover .beaver-icon {
+            transform: rotate(-6deg) scale(1.06);
+        }
         nav a {
             color: var(--muted);
             text-decoration: none;
@@ -126,6 +148,11 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 24px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .card:hover {
+            border-color: rgba(247, 129, 102, 0.5);
+            transform: translateY(-2px);
         }
         .card h3 { margin-bottom: 10px; font-size: 1.2rem; }
         .card p { color: var(--muted); font-size: 0.95rem; }
@@ -158,11 +185,35 @@
 <body>
 
 <header>
-    <div class="logo">🦫 bobr<span>OS</span></div>
+    <div class="logo">
+        <svg class="beaver-icon" viewBox="0 0 64 64" fill="none" xmlns="http://w3.org" aria-hidden="true">
+            <!-- Уши -->
+            <circle cx="17" cy="18" r="6" fill="#7c4a2d"/>
+            <circle cx="47" cy="18" r="6" fill="#7c4a2d"/>
+            <circle cx="17" cy="18" r="3" fill="#b87a56"/>
+            <circle cx="47" cy="18" r="3" fill="#b87a56"/>
+            <!-- Голова -->
+            <rect x="13" y="15" width="38" height="34" rx="16" fill="#9c5e3c"/>
+            <!-- Щёки -->
+            <ellipse cx="25" cy="38" rx="9" ry="7" fill="#c98e6b"/>
+            <ellipse cx="39" cy="38" rx="9" ry="7" fill="#c98e6b"/>
+            <!-- Зубы -->
+            <rect x="27" y="43" width="4.5" height="8" rx="1.5" fill="#ffffff"/>
+            <rect x="32.5" y="43" width="4.5" height="8" rx="1.5" fill="#ffffff"/>
+            <!-- Глаза -->
+            <circle cx="24" cy="27" r="3" fill="#0d1117"/>
+            <circle cx="40" cy="27" r="3" fill="#0d1117"/>
+            <circle cx="25" cy="26" r="1" fill="#ffffff"/>
+            <circle cx="41" cy="26" r="1" fill="#ffffff"/>
+            <!-- Нос -->
+            <ellipse cx="32" cy="34" rx="5" ry="3.5" fill="#2d1a10"/>
+        </svg>
+        <div>bobr<span>OS</span></div>
+    </div>
     <nav>
-        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Особенности</a>
-        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Требования</a>
-        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Скачать</a>
+        <a href="https://github.com">Особенности</a>
+        <a href="https://github.com">Требования</a>
+        <a href="https://github.com">Скачать</a>
     </nav>
 </header>
 
@@ -171,10 +222,10 @@
     <h1>Операционная система, созданная для скорости и работы</h1>
     <p>bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.</p>
     <div class="buttons" id="download">
-        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" class="btn-ru">
+        <a href="https://github.com" class="btn-ru">
             релизы бобр ос
         </a>
-        <a href="https://github.com/M1ZZL1/bobr-os-team" class="btn-ru">
+        <a href="https://github.com" class="btn-ru">
             Репозиторий проекта
         </a>
     </div>
