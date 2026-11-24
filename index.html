@@ -46,16 +46,27 @@
             padding: 0 20px;
             text-align: center;
         }
-        .badge {
+        .badge-ru {
             display: inline-block;
-            background: rgba(247, 129, 102, 0.15);
-            color: var(--accent);
-            padding: 6px 14px;
+            background: linear-gradient(
+                to bottom,
+                #ffffff 0%,
+                #ffffff 33.33%,
+                #0039a6 33.33%,
+                #0039a6 66.66%,
+                #d52b1e 66.66%,
+                #d52b1e 100%
+            );
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px rgba(0, 0, 0, 0.85);
+            padding: 8px 20px;
             border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            border: 1px solid rgba(247, 129, 102, 0.3);
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
         h1 {
             font-size: clamp(2.2rem, 5vw, 3.6rem);
@@ -149,19 +160,23 @@
 <header>
     <div class="logo">🦫 bobr<span>OS</span></div>
     <nav>
-        <a href="#features">Особенности</a>
-        <a href="#specs">Требования</a>
-        <a href="#download">Скачать</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Особенности</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Требования</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Скачать</a>
     </nav>
 </header>
 
 <section class="hero">
-    <div class="badge">Сборка 26H1 • 64-bit • Ubuntu Base</div>
+    <div class="badge-ru">РУССКАЯ НОРМАЛЬНАЯ СИСТЕМА</div>
     <h1>Операционная система, созданная для скорости и работы</h1>
     <p>bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.</p>
     <div class="buttons" id="download">
-        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" class="btn-ru">Скачать bobrOS 26H1 (ISO • 3.0 ГБ)</a>
-        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" class="btn-ru">Репозиторий проекта</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" class="btn-ru">
+            Скачать bobrOS 26H1 (ISO • 3.0 ГБ)
+        </a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" class="btn-ru">
+            Репозиторий проекта
+        </a>
     </div>
 </section>
 
