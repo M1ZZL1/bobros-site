@@ -6,195 +6,263 @@
     <title>bobrOS — Быстрая и современная Linux-система</title>
     <style>
         :root {
-            --bg: #0d1117;
-            --card: #161b22;
-            --border: #30363d;
-            --text: #e6edf3;
-            --muted: #8b949e;
-            --accent: #f78166;
-            --btn: #238636;
-            --btn-hover: #2ea043;
+            --bg-color: #0b0e14;
+            --card-bg: #131720;
+            --border-color: #1f2633;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --accent: #ea580c;
+            --accent-hover: #f97316;
+            --badge-bg: rgba(234, 88, 12, 0.12);
+            --badge-border: rgba(234, 88, 12, 0.3);
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-color);
+            color: var(--text-main);
             line-height: 1.6;
         }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
         header {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 24px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
+            padding: 20px 10%;
+            border-bottom: 1px solid var(--border-color);
         }
-        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; }
-        .logo span { color: var(--accent); }
+        .logo {
+            font-size: 1.35rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        nav {
+            display: flex;
+            gap: 24px;
+        }
         nav a {
-            color: var(--muted);
-            text-decoration: none;
-            margin-left: 24px;
+            color: var(--text-muted);
             font-size: 0.95rem;
             transition: color 0.2s;
         }
-        nav a:hover { color: var(--text); }
+        nav a:hover {
+            color: var(--text-main);
+        }
         .hero {
-            max-width: 900px;
-            margin: 80px auto 60px;
-            padding: 0 20px;
             text-align: center;
+            padding: 80px 10% 60px;
+            max-width: 900px;
+            margin: 0 auto;
         }
         .badge {
             display: inline-block;
-            background: rgba(247, 129, 102, 0.15);
-            color: var(--accent);
-            padding: 6px 14px;
-            border-radius: 20px;
+            background-color: var(--badge-bg);
+            border: 1px solid var(--badge-border);
+            color: #fb923c;
+            padding: 6px 16px;
+            border-radius: 999px;
             font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 20px;
-            border: 1px solid rgba(247, 129, 102, 0.3);
+            font-weight: 500;
+            margin-bottom: 24px;
         }
         h1 {
-            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            font-size: 3rem;
+            font-weight: 800;
             line-height: 1.15;
             margin-bottom: 20px;
-            font-weight: 800;
+            letter-spacing: -0.02em;
         }
         .hero p {
-            color: var(--muted);
+            color: var(--text-muted);
             font-size: 1.15rem;
-            max-width: 650px;
+            max-width: 680px;
             margin: 0 auto 36px;
         }
-        .buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-        .btn-primary {
-            background: var(--btn);
-            color: #fff;
+        .buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: 14px 28px;
             border-radius: 8px;
-            text-decoration: none;
             font-weight: 600;
             font-size: 1rem;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            cursor: pointer;
         }
-        .btn-primary:hover { background: var(--btn-hover); }
+        .btn-primary {
+            background-color: var(--accent);
+            color: #ffffff;
+            border: 1px solid var(--accent);
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
         .btn-secondary {
-            background: var(--card);
-            color: var(--text);
-            padding: 14px 28px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            border: 1px solid var(--border);
-            transition: border-color 0.2s;
+            background-color: var(--card-bg);
+            color: #ffffff;
+            border: 1px solid var(--border-color);
         }
-        .btn-secondary:hover { border-color: var(--muted); }
-        .section {
-            max-width: 1100px;
-            margin: 60px auto;
-            padding: 0 20px;
+        .btn-secondary:hover {
+            border-color: #384459;
+            background-color: #191f2b;
         }
-        .section h2 {
-            font-size: 1.9rem;
-            margin-bottom: 32px;
+        section {
+            padding: 60px 10%;
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+        h2 {
             text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 40px;
         }
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 24px;
         }
         .card {
-            background: var(--card);
-            border: 1px solid var(--border);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 24px;
+            padding: 28px;
         }
-        .card h3 { margin-bottom: 10px; font-size: 1.2rem; }
-        .card p { color: var(--muted); font-size: 0.95rem; }
-        .specs-box {
-            background: var(--card);
-            border: 1px solid var(--border);
+        .card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+        .specs {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 30px;
-            max-width: 750px;
+            padding: 12px 32px;
+            max-width: 720px;
             margin: 0 auto;
         }
         .spec-row {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
         }
-        .spec-row:last-child { border-bottom: none; }
-        .spec-label { color: var(--muted); }
+        .spec-row:last-child {
+            border-bottom: none;
+        }
+        .spec-label {
+            color: var(--text-muted);
+        }
+        .spec-value {
+            font-weight: 600;
+            text-align: right;
+        }
         footer {
             text-align: center;
-            padding: 40px 20px;
-            color: var(--muted);
+            padding: 40px 10%;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
             font-size: 0.9rem;
-            border-top: 1px solid var(--border);
-            margin-top: 80px;
+        }
+        @media (max-width: 640px) {
+            h1 { font-size: 2.1rem; }
+            header { flex-direction: column; gap: 16px; }
+            .spec-row { flex-direction: column; gap: 4px; }
+            .spec-value { text-align: left; }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">🦫 bobr<span>OS</span></div>
-    <nav>
-        <a href="#features">Особенности</a>
-        <a href="#specs">Требования</a>
-        <a href="#download">Скачать</a>
-    </nav>
-</header>
+    <header>
+        <a href="https://github.com" class="logo">🦫 bobrOS</a>
+        <nav>
+            <a href="https://github.com">Особенности</a>
+            <a href="https://github.com">Требования</a>
+            <a href="https://github.com">Скачать</a>
+        </nav>
+    </header>
 
-<section class="hero">
-    <div class="badge">Сборка 26H1 • 64-bit • Ubuntu Base</div>
-    <h1>Операционная система, созданная для скорости и работы</h1>
-    <p>bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.</p>
-    <div class="buttons" id="download">
-        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Скачать bobrOS 26H1 (ISO • 3.0 ГБ)</a>
-        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Репозиторий проекта</a>
-    </div>
-</section>
-
-<section class="section" id="features">
-    <h2>Почему bobrOS?</h2>
-    <div class="grid">
-        <div class="card">
-            <h3>⚡ Максимальная скорость</h3>
-            <p>Оптимизированные службы и минимум фоновых процессов обеспечивают мгновенный отклик даже на не самом новом железе.</p>
-        </div>
-        <div class="card">
-            <h3>🛠️ Всё готово из коробки</h3>
-            <p>Не нужно тратить часы на настройку после установки — базовые утилиты, драйверы и среда уже интегрированы в образ.</p>
-        </div>
-        <div class="card">
-            <h3>🔒 Надёжность и контроль</h3>
-            <p>Построена на проверенной базе Linux x86_64 без принудительных обновлений и телеметрии.</p>
+    <div class="hero">
+        <div class="badge">Сборка 26H1 • 64-bit • Ubuntu Base</div>
+        <h1>Операционная система, созданная для скорости и работы</h1>
+        <p>bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.</p>
+        <div class="buttons">
+            <a href="https://github.com" class="btn btn-primary">Скачать bobrOS 26H1 (ISO • 3.0 ГБ)</a>
+            <a href="https://github.com" class="btn btn-secondary">Репозиторий проекта</a>
         </div>
     </div>
-</section>
 
-<section class="section" id="specs">
-    <h2>Системные требования</h2>
-    <div class="specs-box">
-        <div class="spec-row"><span class="spec-label">Архитектура</span><span>64-bit (x86_64)</span></div>
-        <div class="spec-row"><span class="spec-label">Процессор</span><span>2 ядра от 2.0 ГГц и выше</span></div>
-        <div class="spec-row"><span class="spec-label">Оперативная память</span><span>Минимум 4 ГБ (рекомендуется 8 ГБ)</span></div>
-        <div class="spec-row"><span class="spec-label">Место на диске</span><span>От 25 ГБ свободного пространства</span></div>
-        <div class="spec-row"><span class="spec-label">Размер образа</span><span>3.0 ГБ (bobrOS 64 Bit-26H1)</span></div>
-    </div>
-</section>
+    <section>
+        <h2>Почему bobrOS?</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>⚡ Максимальная скорость</h3>
+                <p>Оптимизированные службы и минимум фоновых процессов обеспечивают мгновенный отклик даже на не самом новом железе.</p>
+            </div>
+            <div class="card">
+                <h3>🛠 Всё готово из коробки</h3>
+                <p>Не нужно тратить часы на настройку после установки — базовые утилиты, драйверы и среда уже интегрированы в образ.</p>
+            </div>
+            <div class="card">
+                <h3>🔒 Надёжность и контроль</h3>
+                <p>Построена на проверенной базе Linux x86_64 без принудительных обновлений и телеметрии.</p>
+            </div>
+        </div>
+    </section>
 
-<footer>
-    © 2026 bobrOS Team. Все права защищены.
-</footer>
+    <section>
+        <h2>Системные требования</h2>
+        <div class="specs">
+            <div class="spec-row">
+                <span class="spec-label">Архитектура</span>
+                <span class="spec-value">64-bit (x86_64)</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Процессор</span>
+                <span class="spec-value">2 ядра от 2.0 ГГц и выше</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Оперативная память</span>
+                <span class="spec-value">Минимум 4 ГБ (рекомендуется 8 ГБ)</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Место на диске</span>
+                <span class="spec-value">От 25 ГБ свободного пространства</span>
+            </div>
+            <div class="spec-row">
+                <span class="spec-label">Размер образа</span>
+                <span class="spec-value">3.0 ГБ (bobrOS 64 Bit-26H1)</span>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        © 2026 bobrOS Team. Все права защищены.
+    </footer>
 
 </body>
 </html>
