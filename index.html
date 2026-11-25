@@ -4,16 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>bobrOS — Быстрая и современная Linux-система</title>
-    <!-- Иконка бобра для вкладки браузера (Favicon) -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦫</text></svg>">
     <style>
         :root {
-            --bg: #0d1117;
-            --card: #161b22;
-            --border: #30363d;
+            --bg: #07090d;
+            --card: rgba(22, 27, 34, 0.65);
+            --border: rgba(255, 255, 255, 0.12);
             --text: #e6edf3;
-            --muted: #8b949e;
+            --muted: #9ba3b0;
             --accent: #f78166;
+            --neon-green: #00ff88;
+            --neon-blue: #00d2ff;
+            --neon-red: #ff2a5f;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
@@ -22,44 +23,139 @@
             background-color: var(--bg);
             color: var(--text);
             line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
         }
+
+        #xeon-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -2;
+        }
+
+        .ambient-blobs {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(95px);
+            opacity: 0.4;
+            animation: floatBlob 14s infinite alternate ease-in-out;
+        }
+        .blob-1 { width: 420px; height: 420px; background: #0039a6; top: -100px; left: -100px; }
+        .blob-2 { width: 480px; height: 480px; background: #d52b1e; bottom: -140px; right: -100px; animation-delay: -5s; }
+        .blob-3 { width: 320px; height: 320px; background: #f78166; top: 45%; left: 45%; animation-delay: -9s; }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(70px, -50px) scale(1.2); }
+            100% { transform: translate(-50px, 70px) scale(0.95); }
+        }
+
         header {
             max-width: 1100px;
-            margin: 0 auto;
-            padding: 24px 20px;
+            margin: 18px auto 0;
+            padding: 16px 26px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border);
+            background: rgba(13, 17, 23, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            position: sticky;
+            top: 16px;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
         .logo {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.5rem;
-            font-weight: 800;
+            font-size: 1.55rem;
+            font-weight: 900;
             letter-spacing: -0.5px;
+            cursor: pointer;
+            transition: transform 0.25s;
         }
-        .logo span { color: var(--accent); }
-        .beaver-icon {
-            width: 34px;
-            height: 34px;
-            flex-shrink: 0;
+        .logo:hover { transform: scale(1.06); }
+        .logo span {
+            background: linear-gradient(90deg, #f78166, #ff2a5f, #00d2ff, #f78166);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientFlow 3s linear infinite;
         }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 300% 50%; }
+        }
+
         nav a {
             color: var(--muted);
             text-decoration: none;
             margin-left: 24px;
             font-size: 0.95rem;
-            transition: color 0.2s;
+            font-weight: 600;
+            transition: color 0.2s, text-shadow 0.2s;
         }
-        nav a:hover { color: var(--text); }
+        nav a:hover {
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(247, 129, 102, 0.85);
+        }
+
         .hero {
-            max-width: 900px;
-            margin: 80px auto 60px;
+            max-width: 920px;
+            margin: 50px auto 60px;
             padding: 0 20px;
             text-align: center;
         }
+
+        .bobr-mascot {
+            width: 190px;
+            height: 190px;
+            margin: 0 auto 20px;
+            cursor: pointer;
+            animation: floatBobr 3.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 22px rgba(247, 129, 102, 0.55));
+            transition: transform 0.2s, filter 0.2s;
+        }
+        .bobr-mascot:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 36px rgba(0, 210, 255, 0.9));
+        }
+        .bobr-mascot:active {
+            transform: scale(0.92);
+        }
+        @keyframes floatBobr {
+            0%, 100% { transform: translateY(0px) rotate(-2deg); }
+            50% { transform: translateY(-14px) rotate(3deg); }
+        }
+        .bobr-ring {
+            transform-origin: 100px 100px;
+            animation: spinRing 7s linear infinite;
+        }
+        .bobr-teeth {
+            animation: chew 0.35s infinite alternate;
+        }
+        @keyframes spinRing {
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes chew {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-2px); }
+        }
+
         .badge-ru {
             display: inline-block;
             background: linear-gradient(
@@ -73,29 +169,46 @@
             );
             color: #ffffff;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px rgba(0, 0, 0, 0.85);
-            padding: 8px 20px;
+            padding: 8px 22px;
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 800;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
             margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 0 25px rgba(0, 57, 166, 0.7), 0 0 35px rgba(213, 43, 30, 0.5);
+            animation: pulseBadge 2s infinite alternate;
         }
+        @keyframes pulseBadge {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
         h1 {
-            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            font-size: clamp(2.2rem, 5vw, 3.7rem);
             line-height: 1.15;
             margin-bottom: 20px;
-            font-weight: 800;
+            font-weight: 900;
+            background: linear-gradient(120deg, #ffffff 20%, #f78166 50%, #00d2ff 80%, #ffffff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 4s linear infinite;
         }
+        @keyframes shineText {
+            to { background-position: 200% center; }
+        }
+
         .hero p {
             color: var(--muted);
             font-size: 1.15rem;
             max-width: 650px;
             margin: 0 auto 36px;
         }
+
         .buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
         .btn-ru {
+            position: relative;
             background: linear-gradient(
                 to bottom,
                 #ffffff 0%,
@@ -108,57 +221,111 @@
             color: #ffffff;
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px rgba(0, 0, 0, 0.85);
             padding: 14px 28px;
-            border-radius: 8px;
+            border-radius: 10px;
             text-decoration: none;
-            font-weight: 700;
+            font-weight: 800;
             font-size: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 6px 22px rgba(0, 57, 166, 0.5);
             transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+        }
+        .btn-ru::before {
+            content: "";
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: btnSweep 2.8s infinite;
+        }
+        @keyframes btnSweep {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
         }
         .btn-ru:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 57, 166, 0.5);
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 10px 30px rgba(213, 43, 30, 0.8);
         }
+
         .section {
             max-width: 1100px;
-            margin: 60px auto;
+            margin: 65px auto;
             padding: 0 20px;
         }
         .section h2 {
-            font-size: 1.9rem;
-            margin-bottom: 32px;
+            font-size: 2rem;
+            margin-bottom: 34px;
             text-align: center;
         }
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 22px;
+            perspective: 1000px;
         }
         .card {
+            position: relative;
             background: var(--card);
-            border: 1px solid var(--border);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 14px;
+            padding: 26px;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out, box-shadow 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        }
+        .card::before {
+            content: "";
+            position: absolute;
+            inset: -50%;
+            background: conic-gradient(from 0deg, transparent, #f78166, #00d2ff, #d52b1e, transparent 60%);
+            animation: rotateBorder 4.5s linear infinite;
+            z-index: -2;
+        }
+        .card::after {
+            content: "";
+            position: absolute;
+            inset: 2px;
+            background: #10151d;
             border-radius: 12px;
-            padding: 24px;
+            z-index: -1;
+        }
+        @keyframes rotateBorder {
+            100% { transform: rotate(360deg); }
+        }
+        .card:hover {
+            box-shadow: 0 15px 40px rgba(247, 129, 102, 0.3);
         }
         .card h3 { margin-bottom: 10px; font-size: 1.2rem; }
         .card p { color: var(--muted); font-size: 0.95rem; }
+
         .specs-box {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            background: rgba(16, 21, 29, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(247, 129, 102, 0.35);
+            border-radius: 14px;
             padding: 30px;
             max-width: 750px;
             margin: 0 auto;
+            box-shadow: 0 0 35px rgba(0, 57, 166, 0.25);
         }
         .spec-row {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
+            padding: 13px 10px;
             border-bottom: 1px solid var(--border);
+            border-radius: 8px;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .spec-row:hover {
+            background: rgba(247, 129, 102, 0.12);
+            transform: translateX(6px);
         }
         .spec-row:last-child { border-bottom: none; }
         .spec-label { color: var(--muted); }
+
         footer {
             text-align: center;
             padding: 40px 20px;
@@ -166,47 +333,107 @@
             font-size: 0.9rem;
             border-top: 1px solid var(--border);
             margin-top: 80px;
+            background: rgba(7, 9, 13, 0.85);
+            backdrop-filter: blur(10px);
         }
     </style>
 </head>
 <body>
 
+<canvas id="xeon-canvas"></canvas>
+
+<div class="ambient-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+</div>
+
 <header>
-    <div class="logo">
-        <!-- SVG-иконка бобра -->
-        <svg class="beaver-icon" viewBox="0 0 64 64" fill="none" xmlns="http://w3.org" aria-hidden="true">
-            <circle cx="15" cy="18" r="7" fill="#6E4427"/>
-            <circle cx="49" cy="18" r="7" fill="#6E4427"/>
-            <circle cx="15" cy="18" r="3.5" fill="#A46B43"/>
-            <circle cx="49" cy="18" r="3.5" fill="#A46B43"/>
-            <rect x="11" y="13" width="42" height="40" rx="20" fill="#8B5A2B"/>
-            <ellipse cx="32" cy="40" rx="14" ry="10" fill="#C68B59"/>
-            <rect x="26" y="46" width="5.5" height="9" rx="1.5" fill="#FFFFFF"/>
-            <rect x="32.5" y="46" width="5.5" height="9" rx="1.5" fill="#FFFFFF"/>
-            <ellipse cx="32" cy="35" rx="5.5" ry="3.8" fill="#2B1B12"/>
-            <circle cx="22" cy="27" r="3" fill="#161B22"/>
-            <circle cx="42" cy="27" r="3" fill="#161B22"/>
-            <circle cx="23" cy="26" r="1" fill="#FFFFFF"/>
-            <circle cx="43" cy="26" r="1" fill="#FFFFFF"/>
+    <div class="logo" onclick="spawnBoom(window.innerWidth / 2, 90)">
+        <svg width="34" height="34" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="34" r="22" fill="#8B5A2B" stroke="#F78166" stroke-width="3"/>
+            <circle cx="15" cy="18" r="6" fill="#6E441E"/>
+            <circle cx="49" cy="18" r="6" fill="#6E441E"/>
+            <circle cx="24" cy="28" r="3.5" fill="#00FF88"/>
+            <circle cx="40" cy="28" r="3.5" fill="#00FF88"/>
+            <ellipse cx="32" cy="36" rx="5" ry="3.5" fill="#2D1A0E"/>
+            <rect x="27" y="40" width="4.5" height="8" rx="1" fill="#FFFFFF"/>
+            <rect x="32.5" y="40" width="4.5" height="8" rx="1" fill="#FFFFFF"/>
         </svg>
         <div>bobr<span>OS</span></div>
     </div>
     <nav>
-        <a href="https://github.com">Особенности</a>
-        <a href="https://github.com">Требования</a>
-        <a href="https://github.com">Скачать</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Особенности</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Требования</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Скачать</a>
     </nav>
 </header>
 
 <section class="hero">
+    <div class="bobr-mascot" id="mascot" title="Кликни на бобра!">
+        <svg viewBox="0 0 200 200" width="100%" height="100%">
+            <defs>
+                <radialGradient id="aura" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#f78166" stop-opacity="0.65"/>
+                    <stop offset="70%" stop-color="#0039a6" stop-opacity="0.25"/>
+                    <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+                </radialGradient>
+                <linearGradient id="fur" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#8c5332"/>
+                    <stop offset="100%" stop-color="#4e2b18"/>
+                </linearGradient>
+                <linearGradient id="visor" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#00d2ff"/>
+                    <stop offset="50%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#ff2a5f"/>
+                </linearGradient>
+            </defs>
+
+            <circle cx="100" cy="100" r="95" fill="url(#aura)"/>
+            <circle class="bobr-ring" cx="100" cy="100" r="82" fill="none" stroke="#f78166" stroke-width="2.5" stroke-dasharray="16 8 4 8" opacity="0.85"/>
+
+            <ellipse cx="148" cy="138" rx="28" ry="18" transform="rotate(-25 148 138)" fill="#2d2926" stroke="#1a1715" stroke-width="3"/>
+            <path d="M132 130 L162 144 M138 123 L166 136 M128 138 L155 151" stroke="#47413d" stroke-width="2"/>
+
+            <circle cx="62" cy="60" r="14" fill="#5c331c" stroke="#381d0e" stroke-width="3"/>
+            <circle cx="138" cy="60" r="14" fill="#5c331c" stroke="#381d0e" stroke-width="3"/>
+
+            <circle cx="100" cy="96" r="46" fill="url(#fur)" stroke="#381d0e" stroke-width="3"/>
+
+            <circle cx="84" cy="104" r="15" fill="#c98e68"/>
+            <circle cx="116" cy="104" r="15" fill="#c98e68"/>
+
+            <g class="bobr-teeth">
+                <rect x="91" y="112" width="8" height="14" rx="2" fill="#ffffff" stroke="#ccc" stroke-width="1"/>
+                <rect x="101" y="112" width="8" height="14" rx="2" fill="#ffffff" stroke="#ccc" stroke-width="1"/>
+            </g>
+
+            <ellipse cx="100" cy="96" rx="10" ry="7" fill="#1e1410"/>
+            <ellipse cx="97" cy="94" rx="3" ry="2" fill="#ffffff" opacity="0.7"/>
+
+            <path d="M58 76 L142 76 L136 92 L105 92 L100 86 L95 92 L64 92 Z" fill="url(#visor)" stroke="#0d1117" stroke-width="3"/>
+            <line x1="68" y1="80" x2="88" y2="88" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+            <line x1="112" y1="80" x2="130" y2="88" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+
+            <g transform="translate(56, 134) rotate(-6)">
+                <rect x="0" y="0" width="88" height="20" rx="3" fill="#0f5132" stroke="#198754" stroke-width="2"/>
+                <rect x="8" y="4" width="12" height="10" fill="#111"/>
+                <rect x="26" y="4" width="12" height="10" fill="#111"/>
+                <rect x="44" y="4" width="12" height="10" fill="#111"/>
+                <rect x="62" y="4" width="12" height="10" fill="#111"/>
+                <path d="M4 20 L84 20" stroke="#ffc107" stroke-width="3" stroke-dasharray="4 2"/>
+            </g>
+        </svg>
+    </div>
+
     <div class="badge-ru">РУССКАЯ НОРМАЛЬНАЯ СИСТЕМА</div>
     <h1>Операционная система, созданная для скорости и работы</h1>
     <p>bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.</p>
     <div class="buttons" id="download">
-        <a href="https://github.com" class="btn-ru">
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" class="btn-ru">
             релизы бобр ос
         </a>
-        <a href="https://github.com" class="btn-ru">
+        <a href="https://github.com/M1ZZL1/bobr-os-team" class="btn-ru">
             Репозиторий проекта
         </a>
     </div>
@@ -215,16 +442,16 @@
 <section class="section" id="features">
     <h2>Почему bobrOS?</h2>
     <div class="grid">
-        <div class="card">
-            <h3>⚡ Максимальная скорость</h3>
+        <div class="card tilt-card">
+            <h3>Максимальная скорость</h3>
             <p>Оптимизированные службы и минимум фоновых процессов обеспечивают мгновенный отклик даже на не самом новом железе.</p>
         </div>
-        <div class="card">
-            <h3>🛠️ Всё готово из коробки</h3>
+        <div class="card tilt-card">
+            <h3>Всё готово из коробки</h3>
             <p>Не нужно тратить часы на настройку после установки — базовые утилиты, драйверы и среда уже интегрированы в образ.</p>
         </div>
-        <div class="card">
-            <h3>🔒 Надёжность и контроль</h3>
+        <div class="card tilt-card">
+            <h3>Надёжность и контроль</h3>
             <p>Построена на проверенной базе Linux x86_64 без принудительных обновлений и телеметрии.</p>
         </div>
     </div>
@@ -244,6 +471,141 @@
 <footer>
     © 2026 bobrOS Team. Все права защищены.
 </footer>
+
+<script>
+    const canvas = document.getElementById('xeon-canvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const mouse = { x: -1000, y: -1000 };
+    window.addEventListener('mousemove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    const colors = ['#f78166', '#00d2ff', '#00ff88', '#ffffff', '#ff2a5f'];
+    const particles = [];
+    const booms = [];
+
+    function addParticles(count) {
+        for (let i = 0; i < count; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 2.4,
+                vy: (Math.random() - 0.5) * 2.4,
+                size: Math.random() * 2.5 + 1.2,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            });
+        }
+    }
+
+    addParticles(180);
+
+    function spawnBoom(x, y) {
+        for (let i = 0; i < 40; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 9 + 2;
+            booms.push({
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                alpha: 1,
+                size: Math.random() * 5 + 3,
+                color: colors[Math.floor(Math.random() * colors.length)]
+            });
+        }
+    }
+
+    window.addEventListener('click', (e) => {
+        spawnBoom(e.clientX, e.clientY);
+    });
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+
+            const dxm = mouse.x - p.x;
+            const dym = mouse.y - p.y;
+            const distM = Math.hypot(dxm, dym);
+            if (distM < 150) {
+                p.x -= dxm * 0.03;
+                p.y -= dym * 0.03;
+            }
+
+            if (p.x < 0 || p.x > width) p.vx *= -1;
+            if (p.y < 0 || p.y > height) p.vy *= -1;
+
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+
+            for (let j = i + 1; j < particles.length; j++) {
+                const p2 = particles[j];
+                const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                if (dist < 115) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(0, 255, 136, ${1 - dist / 115})`;
+                    ctx.lineWidth = 0.7;
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        for (let i = booms.length - 1; i >= 0; i--) {
+            const b = booms[i];
+            b.x += b.vx;
+            b.y += b.vy;
+            b.vy += 0.2;
+            b.alpha -= 0.02;
+
+            if (b.alpha <= 0) {
+                booms.splice(i, 1);
+                continue;
+            }
+
+            ctx.save();
+            ctx.globalAlpha = b.alpha;
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, b.size, 0, Math.PI * 2);
+            ctx.fillStyle = b.color;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    document.querySelectorAll('.tilt-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -10;
+            const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 10;
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+        });
+    });
+</script>
 
 </body>
 </html>
