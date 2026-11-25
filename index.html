@@ -4,18 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>bobrOS — Быстрая и современная Linux-система</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='34' r='22' fill='%238B5A2B' stroke='%23F78166' stroke-width='3'/%3E%3Ccircle cx='15' cy='18' r='6' fill='%236E441E'/%3E%3Ccircle cx='49' cy='18' r='6' fill='%236E441E'/%3E%3Crect x='14' y='24' width='36' height='9' rx='3' fill='%2300D2FF'/%3E%3Cellipse cx='32' cy='37' rx='5' ry='3.5' fill='%232D1A0E'/%3E%3Crect x='26.5' y='41' width='5' height='9' rx='1' fill='%23FFFFFF'/%3E%3Crect x='32.5' y='41' width='5' height='9' rx='1' fill='%23FFFFFF'/%3E%3C/svg%3E">
     <style>
         :root {
             --bg: #07090d;
-            --card: rgba(22, 27, 34, 0.68);
-            --border: rgba(255, 255, 255, 0.14);
+            --card: rgba(22, 27, 34, 0.65);
+            --border: rgba(255, 255, 255, 0.12);
             --text: #e6edf3;
             --muted: #9ba3b0;
             --accent: #f78166;
-            --c1: #ffffff;
-            --c2: #0039a6;
-            --c3: #d52b1e;
+            --primary: #0039a6;
+            --secondary: #d52b1e;
+            --glow: rgba(0, 57, 166, 0.55);
         }
+
+        body.theme-kz {
+            --accent: #fec50c;
+            --primary: #00afca;
+            --secondary: #fec50c;
+            --glow: rgba(0, 175, 202, 0.55);
+        }
+
+        body.theme-en {
+            --accent: #00d2ff;
+            --primary: #012169;
+            --secondary: #c8102e;
+            --glow: rgba(200, 16, 46, 0.55);
+        }
+
+        body.theme-by {
+            --accent: #00af66;
+            --primary: #d22730;
+            --secondary: #00af66;
+            --glow: rgba(0, 175, 102, 0.55);
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body {
@@ -25,14 +48,15 @@
             line-height: 1.6;
             overflow-x: hidden;
             position: relative;
+            transition: background-color 0.4s;
         }
 
-        /* Экран-заглушка при недоступности региона */
-        #geo-block-screen {
+        /* Экран ограничения региона */
+        #geo-block {
             display: none;
             position: fixed;
             inset: 0;
-            background: #07090d;
+            background: radial-gradient(circle at center, #141923 0%, #07090d 100%);
             z-index: 99999;
             flex-direction: column;
             align-items: center;
@@ -40,24 +64,38 @@
             text-align: center;
             padding: 24px;
         }
-        #geo-block-screen h1 {
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
+        .block-card {
+            background: rgba(22, 27, 34, 0.85);
+            border: 1px solid rgba(213, 43, 30, 0.45);
+            border-radius: 20px;
+            padding: 40px 32px;
+            max-width: 520px;
+            box-shadow: 0 0 50px rgba(213, 43, 30, 0.25);
+            backdrop-filter: blur(16px);
+        }
+        .block-badge {
+            display: inline-block;
+            background: rgba(213, 43, 30, 0.18);
+            color: #ff5b4d;
+            border: 1px solid rgba(213, 43, 30, 0.5);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+        .block-card h1 {
+            font-size: 1.8rem;
             color: #ffffff;
-            margin-bottom: 14px;
             background: none;
             -webkit-text-fill-color: #ffffff;
+            margin-bottom: 12px;
         }
-        #geo-block-screen p {
-            color: #9ba3b0;
-            font-size: 1.1rem;
-            max-width: 520px;
+        .block-card p {
+            color: var(--muted);
+            font-size: 1rem;
         }
-
-        /* Темы по странам */
-        body.theme-ru { --c1: #ffffff; --c2: #0039a6; --c3: #d52b1e; --accent: #f78166; }
-        body.theme-kz { --c1: #00afca; --c2: #fec50c; --c3: #007a99; --accent: #fec50c; }
-        body.theme-en { --c1: #012169; --c2: #ffffff; --c3: #c8102e; --accent: #38bdf8; }
-        body.theme-by { --c1: #d22730; --c2: #009739; --c3: #ffffff; --accent: #4ade80; }
 
         #xeon-canvas {
             position: fixed;
@@ -79,12 +117,12 @@
             border-radius: 50%;
             filter: blur(95px);
             opacity: 0.42;
-            transition: background 0.6s ease;
             animation: floatBlob 14s infinite alternate ease-in-out;
+            transition: background 0.6s ease;
         }
-        .blob-1 { width: 420px; height: 420px; background: var(--c2); top: -100px; left: -100px; }
-        .blob-2 { width: 480px; height: 480px; background: var(--c3); bottom: -140px; right: -100px; animation-delay: -5s; }
-        .blob-3 { width: 320px; height: 320px; background: var(--c1); top: 45%; left: 45%; animation-delay: -9s; opacity: 0.25; }
+        .blob-1 { width: 420px; height: 420px; background: var(--primary); top: -100px; left: -100px; }
+        .blob-2 { width: 480px; height: 480px; background: var(--secondary); bottom: -140px; right: -100px; animation-delay: -5s; }
+        .blob-3 { width: 320px; height: 320px; background: var(--accent); top: 45%; left: 45%; animation-delay: -9s; }
 
         @keyframes floatBlob {
             0% { transform: translate(0, 0) scale(1); }
@@ -115,7 +153,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 1.5rem;
+            font-size: 1.55rem;
             font-weight: 900;
             letter-spacing: -0.5px;
             cursor: pointer;
@@ -123,18 +161,11 @@
         }
         .logo:hover { transform: scale(1.05); }
         .logo span {
-            background: linear-gradient(90deg, var(--c1), var(--accent), var(--c2), var(--c1));
-            background-size: 300% 300%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradientFlow 3s linear infinite;
-        }
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 300% 50%; }
+            color: var(--accent);
+            transition: color 0.3s;
         }
 
-        .header-right {
+        .nav-right {
             display: flex;
             align-items: center;
             gap: 20px;
@@ -146,15 +177,11 @@
             margin-left: 18px;
             font-size: 0.95rem;
             font-weight: 600;
-            transition: color 0.2s, text-shadow 0.2s;
+            transition: color 0.2s;
         }
         nav a:first-child { margin-left: 0; }
-        nav a:hover {
-            color: #ffffff;
-            text-shadow: 0 0 12px var(--accent);
-        }
+        nav a:hover { color: #ffffff; }
 
-        /* Переключатель языков */
         .lang-switcher {
             display: flex;
             gap: 6px;
@@ -172,17 +199,17 @@
             color: var(--muted);
             padding: 5px 10px;
             border-radius: 7px;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             font-weight: 800;
             cursor: pointer;
             transition: all 0.2s;
         }
         .lang-btn:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
         .lang-btn.active {
-            color: #fff;
             background: rgba(255, 255, 255, 0.14);
+            color: #fff;
             border-color: var(--accent);
-            box-shadow: 0 0 12px rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 12px var(--glow);
         }
 
         .flag-icon {
@@ -191,11 +218,10 @@
             border-radius: 2px;
             display: inline-block;
             vertical-align: middle;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
             flex-shrink: 0;
         }
 
-        /* Главный экран */
         .hero {
             max-width: 920px;
             margin: 46px auto 60px;
@@ -207,20 +233,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 28px;
+            gap: 24px;
             margin-bottom: 22px;
         }
         .side-flag {
-            width: 76px;
-            height: 50px;
+            width: 72px;
+            height: 48px;
             border-radius: 6px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-            animation: waveFlag 2.6s ease-in-out infinite alternate;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+            animation: waveFlag 3s ease-in-out infinite alternate;
         }
-        .side-flag.right { animation-delay: -1.3s; }
+        .side-flag.right { animation-delay: -1.5s; }
         @keyframes waveFlag {
-            0% { transform: rotate(-5deg) translateY(0px) scale(1); }
-            100% { transform: rotate(5deg) translateY(-8px) scale(1.05); }
+            0% { transform: translateY(0) rotate(-4deg) scale(1); }
+            100% { transform: translateY(-8px) rotate(4deg) scale(1.05); }
         }
 
         .bobr-mascot {
@@ -228,13 +254,11 @@
             height: 185px;
             cursor: pointer;
             animation: floatBobr 3.5s ease-in-out infinite;
-            filter: drop-shadow(0 0 22px rgba(247, 129, 102, 0.55));
-            transition: transform 0.2s, filter 0.2s;
+            filter: drop-shadow(0 0 22px var(--glow));
+            transition: transform 0.2s;
         }
-        .bobr-mascot:hover {
-            transform: scale(1.1);
-            filter: drop-shadow(0 0 36px var(--accent));
-        }
+        .bobr-mascot:hover { transform: scale(1.09); }
+        .bobr-mascot:active { transform: scale(0.93); }
         @keyframes floatBobr {
             0%, 100% { transform: translateY(0px) rotate(-2deg); }
             50% { transform: translateY(-14px) rotate(3deg); }
@@ -243,53 +267,42 @@
             transform-origin: 100px 100px;
             animation: spinRing 7s linear infinite;
         }
-        .bobr-teeth {
-            animation: chew 0.35s infinite alternate;
-        }
-        @keyframes spinRing {
-            100% { transform: rotate(360deg); }
-        }
-        @keyframes chew {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-2px); }
-        }
+        .bobr-teeth { animation: chew 0.35s infinite alternate; }
+        @keyframes spinRing { 100% { transform: rotate(360deg); } }
+        @keyframes chew { 0% { transform: translateY(0); } 100% { transform: translateY(-2px); } }
 
-        /* Плашка страны */
-        .badge-country {
+        .badge-theme {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            color: #ffffff;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px rgba(0, 0, 0, 0.85);
             padding: 8px 22px;
-            border-radius: 20px;
+            border-radius: 22px;
             font-size: 0.9rem;
             font-weight: 800;
             letter-spacing: 0.8px;
             margin-bottom: 24px;
+            color: #ffffff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 0 25px var(--glow);
             animation: pulseBadge 2s infinite alternate;
         }
-        body.theme-ru .badge-country {
+        body.theme-ru .badge-theme, body.theme-ru .btn-theme {
             background: linear-gradient(to bottom, #ffffff 0%, #ffffff 33.33%, #0039a6 33.33%, #0039a6 66.66%, #d52b1e 66.66%, #d52b1e 100%);
-            box-shadow: 0 0 25px rgba(0, 57, 166, 0.7), 0 0 35px rgba(213, 43, 30, 0.5);
         }
-        body.theme-kz .badge-country {
-            background: linear-gradient(135deg, #00afca 0%, #0088a3 65%, #fec50c 100%);
-            box-shadow: 0 0 25px rgba(0, 175, 202, 0.7), 0 0 35px rgba(254, 197, 12, 0.45);
+        body.theme-kz .badge-theme, body.theme-kz .btn-theme {
+            background: linear-gradient(135deg, #00afca 0%, #008299 65%, #d4a000 100%);
         }
-        body.theme-en .badge-country {
-            background: linear-gradient(135deg, #012169 0%, #c8102e 50%, #012169 100%);
-            box-shadow: 0 0 25px rgba(1, 33, 105, 0.8), 0 0 35px rgba(200, 16, 46, 0.5);
+        body.theme-en .badge-theme, body.theme-en .btn-theme {
+            background: linear-gradient(135deg, #012169 0%, #c8102e 55%, #012169 100%);
         }
-        body.theme-by .badge-country {
-            background: linear-gradient(to bottom, #d22730 0%, #d22730 66.66%, #009739 66.66%, #009739 100%);
-            box-shadow: 0 0 25px rgba(210, 39, 48, 0.7), 0 0 35px rgba(0, 151, 57, 0.5);
+        body.theme-by .badge-theme, body.theme-by .btn-theme {
+            background: linear-gradient(to bottom, #d22730 0%, #d22730 66.66%, #00af66 66.66%, #00af66 100%);
         }
 
         @keyframes pulseBadge {
             0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
+            100% { transform: scale(1.04); }
         }
 
         h1 {
@@ -297,15 +310,13 @@
             line-height: 1.15;
             margin-bottom: 20px;
             font-weight: 900;
-            background: linear-gradient(120deg, #ffffff 20%, var(--accent) 50%, var(--c1) 80%, #ffffff 100%);
+            background: linear-gradient(120deg, #ffffff 25%, var(--accent) 55%, #ffffff 85%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: shineText 4s linear infinite;
         }
-        @keyframes shineText {
-            to { background-position: 200% center; }
-        }
+        @keyframes shineText { to { background-position: 200% center; } }
 
         .hero p {
             color: var(--muted);
@@ -328,26 +339,10 @@
             font-weight: 800;
             font-size: 1rem;
             border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 6px 22px var(--glow);
             transition: transform 0.2s, box-shadow 0.2s;
             overflow: hidden;
         }
-        body.theme-ru .btn-theme {
-            background: linear-gradient(to bottom, #ffffff 0%, #ffffff 33.33%, #0039a6 33.33%, #0039a6 66.66%, #d52b1e 66.66%, #d52b1e 100%);
-            box-shadow: 0 6px 22px rgba(0, 57, 166, 0.5);
-        }
-        body.theme-kz .btn-theme {
-            background: linear-gradient(135deg, #00afca 0%, #007d94 70%, #d4a000 100%);
-            box-shadow: 0 6px 22px rgba(0, 175, 202, 0.5);
-        }
-        body.theme-en .btn-theme {
-            background: linear-gradient(135deg, #012169 0%, #c8102e 50%, #012169 100%);
-            box-shadow: 0 6px 22px rgba(200, 16, 46, 0.5);
-        }
-        body.theme-by .btn-theme {
-            background: linear-gradient(to bottom, #d22730 0%, #d22730 66.66%, #009739 66.66%, #009739 100%);
-            box-shadow: 0 6px 22px rgba(210, 39, 48, 0.5);
-        }
-
         .btn-theme::before {
             content: "";
             position: absolute;
@@ -362,7 +357,7 @@
         }
         .btn-theme:hover {
             transform: translateY(-3px) scale(1.03);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 30px var(--glow);
         }
 
         .section {
@@ -397,7 +392,7 @@
             content: "";
             position: absolute;
             inset: -50%;
-            background: conic-gradient(from 0deg, transparent, var(--accent), var(--c1), var(--c2), transparent 65%);
+            background: conic-gradient(from 0deg, transparent, var(--accent), var(--primary), var(--secondary), transparent 60%);
             animation: rotateBorder 4.5s linear infinite;
             z-index: -2;
         }
@@ -409,22 +404,21 @@
             border-radius: 12px;
             z-index: -1;
         }
-        @keyframes rotateBorder {
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes rotateBorder { 100% { transform: rotate(360deg); } }
+        .card:hover { box-shadow: 0 15px 40px var(--glow); }
         .card h3 { margin-bottom: 10px; font-size: 1.2rem; }
         .card p { color: var(--muted); font-size: 0.95rem; }
 
         .specs-box {
-            background: rgba(16, 21, 29, 0.78);
+            background: rgba(16, 21, 29, 0.75);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 14px;
             padding: 30px;
             max-width: 750px;
             margin: 0 auto;
-            box-shadow: 0 0 35px rgba(0, 0, 0, 0.45);
+            box-shadow: 0 0 35px var(--glow);
         }
         .spec-row {
             display: flex;
@@ -455,359 +449,388 @@
 </head>
 <body class="theme-ru">
 
-<!-- Экран блокировки -->
-<div id="geo-block-screen">
-    <h1>Извините, bobrOS не поддерживается в вашей стране</h1>
-    <p>Доступ к сайту и загрузке образов ограничен для вашего региона.</p>
-</div>
-
-<!-- SVG-спрайт флагов -->
-<svg style="display:none;" xmlns="http://www.w3.org/2000/svg">
+<!-- SVG-спрайты флагов -->
+<svg style="display: none;">
+    <!-- Флаг России -->
     <symbol id="flag-ru" viewBox="0 0 30 20">
         <rect width="30" height="6.67" y="0" fill="#ffffff"/>
         <rect width="30" height="6.67" y="6.67" fill="#0039a6"/>
         <rect width="30" height="6.67" y="13.33" fill="#d52b1e"/>
     </symbol>
 
+    <!-- Флаг Казахстана -->
     <symbol id="flag-kz" viewBox="0 0 30 20">
         <rect width="30" height="20" fill="#00afca"/>
-        <rect width="2.2" height="20" x="1.2" y="0" fill="#fec50c" opacity="0.9"/>
-        <path d="M1.2 2 L3.4 4 L1.2 6 L3.4 8 L1.2 10 L3.4 12 L1.2 14 L3.4 16 L1.2 18" stroke="#00afca" stroke-width="0.6" fill="none"/>
+        <path d="M2.2 1 v18 M1.2 2 h2 M1.2 5 h2 M1.2 8 h2 M1.2 11 h2 M1.2 14 h2 M1.2 17 h2" stroke="#fec50c" stroke-width="0.9"/>
         <circle cx="16.5" cy="9" r="3.4" fill="#fec50c"/>
-        <g stroke="#fec50c" stroke-width="0.6">
-            <line x1="16.5" y1="3.8" x2="16.5" y2="5"/>
-            <line x1="16.5" y1="13" x2="16.5" y2="14.2"/>
-            <line x1="11.3" y1="9" x2="12.5" y2="9"/>
-            <line x1="20.5" y1="9" x2="21.7" y2="9"/>
-            <line x1="12.8" y1="5.3" x2="13.7" y2="6.2"/>
-            <line x1="19.3" y1="11.8" x2="20.2" y2="12.7"/>
-            <line x1="20.2" y1="5.3" x2="19.3" y2="6.2"/>
-            <line x1="13.7" y1="11.8" x2="12.8" y2="12.7"/>
-        </g>
-        <path d="M11.5 14.5 Q16.5 16.5 21.5 14.5 Q16.5 15.3 11.5 14.5 Z" fill="#fec50c"/>
+        <circle cx="16.5" cy="9" r="4.6" fill="none" stroke="#fec50c" stroke-width="0.7" stroke-dasharray="1 1"/>
+        <path d="M11.5 14.5 Q16.5 12.2 21.5 14.5 Q16.5 13.8 11.5 14.5 Z" fill="#fec50c"/>
     </symbol>
 
+    <!-- Флаг Великобритании -->
     <symbol id="flag-en" viewBox="0 0 30 20">
         <rect width="30" height="20" fill="#012169"/>
         <path d="M0,0 L30,20 M30,0 L0,20" stroke="#ffffff" stroke-width="3.6"/>
         <path d="M0,0 L30,20 M30,0 L0,20" stroke="#c8102e" stroke-width="1.8"/>
-        <path d="M15,0 L15,20 M0,10 L30,10" stroke="#ffffff" stroke-width="6"/>
-        <path d="M15,0 L15,20 M0,10 L30,10" stroke="#c8102e" stroke-width="3.6"/>
+        <path d="M15,0 V20 M0,10 H30" stroke="#ffffff" stroke-width="5.5"/>
+        <path d="M15,0 V20 M0,10 H30" stroke="#c8102e" stroke-width="3.2"/>
     </symbol>
 
+    <!-- Флаг Беларуси -->
     <symbol id="flag-by" viewBox="0 0 30 20">
         <rect width="30" height="13.33" y="0" fill="#d22730"/>
-        <rect width="30" height="6.67" y="13.33" fill="#009739"/>
+        <rect width="30" height="6.67" y="13.33" fill="#00af66"/>
         <rect width="4" height="20" x="0" y="0" fill="#ffffff"/>
-        <path d="M2 1 L3.5 3 L2 5 L0.5 3 Z M2 6 L3.5 8 L2 10 L0.5 8 Z M2 11 L3.5 13 L2 15 L0.5 13 Z M2 16 L3.5 18 L2 20 L0.5 18 Z" fill="#d22730"/>
+        <path d="M2 1.5 L3.2 3 L2 4.5 L0.8 3 Z M2 6.5 L3.2 8 L2 9.5 L0.8 8 Z M2 11.5 L3.2 13 L2 14.5 L0.8 13 Z M2 16.5 L3.2 18 L2 19.5 L0.8 18 Z" fill="#d22730"/>
     </symbol>
 </svg>
 
-<div class="ambient-blobs">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
+<!-- Экран блокировки региона -->
+<div id="geo-block">
+    <div class="block-card">
+        <div class="block-badge">REGION RESTRICTED // 451</div>
+        <h1>Извините, bobrOS не поддерживается в вашей стране</h1>
+        <p>Доступ к загрузке и материалам проекта ограничен для вашего региона.</p>
+    </div>
 </div>
 
-<canvas id="xeon-canvas"></canvas>
-
-<header>
-    <div class="logo" onclick="spawnBoom(window.innerWidth / 2, 90)">
-        <svg class="flag-icon" style="width:28px;height:19px;"><use class="active-flag-use" href="#flag-ru"/></svg>
-        <div>bobr<span>OS</span></div>
+<div id="main-app">
+    <div class="ambient-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
-    <div class="header-right">
-        <nav>
-            <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" data-i18n="nav_features">Особенности</a>
-            <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" data-i18n="nav_specs">Требования</a>
-            <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" data-i18n="nav_download">Скачать</a>
-        </nav>
+    <canvas id="xeon-canvas"></canvas>
 
-        <div class="lang-switcher">
-            <button class="lang-btn active" data-lang="ru"><svg class="flag-icon"><use href="#flag-ru"/></svg> РУС</button>
-            <button class="lang-btn" data-lang="kz"><svg class="flag-icon"><use href="#flag-kz"/></svg> ҚАЗ</button>
-            <button class="lang-btn" data-lang="en"><svg class="flag-icon"><use href="#flag-en"/></svg> ENG</button>
-            <button class="lang-btn" data-lang="by"><svg class="flag-icon"><use href="#flag-by"/></svg> БЕЛ</button>
-        </div>
-    </div>
-</header>
-
-<section class="hero">
-    <div class="mascot-stage">
-        <svg class="side-flag left"><use class="active-flag-use" href="#flag-ru"/></svg>
-
-        <div class="bobr-mascot" id="mascot" title="bobrOS">
-            <svg viewBox="0 0 200 200" width="100%" height="100%">
-                <defs>
-                    <radialGradient id="aura" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stop-color="#f78166" stop-opacity="0.6"/>
-                        <stop offset="70%" stop-color="#0039a6" stop-opacity="0.25"/>
-                        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
-                    </radialGradient>
-                </defs>
-                <circle cx="100" cy="100" r="95" fill="url(#aura)"/>
-                <circle class="bobr-ring" cx="100" cy="100" r="82" fill="none" stroke="#f78166" stroke-width="2.5" stroke-dasharray="16 8 4 8" opacity="0.85"/>
-                <ellipse cx="148" cy="138" rx="28" ry="18" transform="rotate(-25 148 138)" fill="#2d2926" stroke="#1a1715" stroke-width="3"/>
-                <circle cx="62" cy="60" r="14" fill="#5c331c" stroke="#381d0e" stroke-width="3"/>
-                <circle cx="138" cy="60" r="14" fill="#5c331c" stroke="#381d0e" stroke-width="3"/>
-                <circle cx="100" cy="100" r="50" fill="#7a4628" stroke="#381d0e" stroke-width="3"/>
-                <circle cx="84" cy="104" r="15" fill="#c98e68"/>
-                <circle cx="116" cy="104" r="15" fill="#c98e68"/>
-                <g class="bobr-teeth">
-                    <rect x="91" y="112" width="8" height="14" rx="2" fill="#ffffff" stroke="#ccc" stroke-width="1"/>
-                    <rect x="101" y="112" width="8" height="14" rx="2" fill="#ffffff" stroke="#ccc" stroke-width="1"/>
-                </g>
-                <ellipse cx="100" cy="96" rx="10" ry="7" fill="#1e1410"/>
-                <path d="M58 76 L142 76 L136 92 L105 92 L100 86 L95 92 L64 92 Z" fill="#00d2ff" stroke="#0d1117" stroke-width="3"/>
-                <line x1="68" y1="80" x2="88" y2="88" stroke="#ffffff" stroke-width="2" opacity="0.85"/>
-                <line x1="112" y1="80" x2="130" y2="88" stroke="#ffffff" stroke-width="2" opacity="0.85"/>
-                <!-- Флаг в лапах бобра -->
-                <g transform="translate(68, 130) rotate(-5)">
-                    <rect x="-2" y="-2" width="68" height="44" rx="4" fill="#0d1117" opacity="0.85"/>
-                    <svg x="0" y="0" width="64" height="40"><use class="active-flag-use" href="#flag-ru"/></svg>
-                </g>
+    <header>
+        <div class="logo" onclick="spawnBoom(window.innerWidth / 2, 90)">
+            <svg width="34" height="34" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="34" r="22" fill="#8B5A2B" stroke="var(--accent)" stroke-width="3"/>
+                <circle cx="15" cy="18" r="6" fill="#6E441E"/>
+                <circle cx="49" cy="18" r="6" fill="#6E441E"/>
+                <rect x="14" y="24" width="36" height="9" rx="3" fill="var(--accent)"/>
+                <ellipse cx="32" cy="37" rx="5" ry="3.5" fill="#2D1A0E"/>
+                <rect x="26.5" y="41" width="5" height="9" rx="1" fill="#FFFFFF"/>
+                <rect x="32.5" y="41" width="5" height="9" rx="1" fill="#FFFFFF"/>
             </svg>
+            <div>bobr<span>OS</span></div>
+            <svg class="flag-icon active-flag-svg"><use href="#flag-ru"></use></svg>
         </div>
 
-        <svg class="side-flag right"><use class="active-flag-use" href="#flag-ru"/></svg>
-    </div>
+        <div class="nav-right">
+            <nav>
+                <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" data-i18n="nav_features">Особенности</a>
+                <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" data-i18n="nav_specs">Требования</a>
+                <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" data-i18n="nav_download">Скачать</a>
+            </nav>
 
-    <div class="badge-country">
-        <svg class="flag-icon"><use class="active-flag-use" href="#flag-ru"/></svg>
-        <span data-i18n="badge">РУССКАЯ НОРМАЛЬНАЯ СИСТЕМА</span>
-    </div>
-
-    <h1 data-i18n="hero_title">Операционная система, созданная для скорости и работы</h1>
-    <p data-i18n="hero_desc">bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.</p>
-
-    <div class="buttons" id="download">
-        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" class="btn-theme">
-            <svg class="flag-icon"><use class="active-flag-use" href="#flag-ru"/></svg>
-            <span data-i18n="btn_releases">релизы бобр ос</span>
-        </a>
-        <a href="https://github.com/M1ZZL1/bobr-os-team" class="btn-theme">
-            <svg class="flag-icon"><use class="active-flag-use" href="#flag-ru"/></svg>
-            <span data-i18n="btn_repo">Репозиторий проекта</span>
-        </a>
-    </div>
-</section>
-
-<section class="section" id="features">
-    <h2 data-i18n="sec_why">Почему bobrOS?</h2>
-    <div class="grid">
-        <div class="card tilt-card">
-            <h3 data-i18n="f1_title">Максимальная скорость</h3>
-            <p data-i18n="f1_desc">Оптимизированные службы и минимум фоновых процессов обеспечивают мгновенный отклик даже на не самом новом железе.</p>
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="ru">
+                    <svg class="flag-icon"><use href="#flag-ru"></use></svg> РУС
+                </button>
+                <button class="lang-btn" data-lang="kz">
+                    <svg class="flag-icon"><use href="#flag-kz"></use></svg> ҚАЗ
+                </button>
+                <button class="lang-btn" data-lang="en">
+                    <svg class="flag-icon"><use href="#flag-en"></use></svg> ENG
+                </button>
+                <button class="lang-btn" data-lang="by">
+                    <svg class="flag-icon"><use href="#flag-by"></use></svg> БЕЛ
+                </button>
+            </div>
         </div>
-        <div class="card tilt-card">
-            <h3 data-i18n="f2_title">Всё готово из коробки</h3>
-            <p data-i18n="f2_desc">Не нужно тратить часы на настройку после установки — базовые утилиты, драйверы и среда уже интегрированы в образ.</p>
-        </div>
-        <div class="card tilt-card">
-            <h3 data-i18n="f3_title">Надёжность и контроль</h3>
-            <p data-i18n="f3_desc">Построена на проверенной базе Linux x86_64 без принудительных обновлений и телеметрии.</p>
-        </div>
-    </div>
-</section>
+    </header>
 
-<section class="section" id="specs">
-    <h2 data-i18n="sec_specs">Системные требования</h2>
-    <div class="specs-box">
-        <div class="spec-row"><span class="spec-label" data-i18n="s1_l">Архитектура</span><span data-i18n="s1_v">64-bit (x86_64)</span></div>
-        <div class="spec-row"><span class="spec-label" data-i18n="s2_l">Процессор</span><span data-i18n="s2_v">2 ядра от 2.0 ГГц и выше</span></div>
-        <div class="spec-row"><span class="spec-label" data-i18n="s3_l">Оперативная память</span><span data-i18n="s3_v">Минимум 4 ГБ (рекомендуется 8 ГБ)</span></div>
-        <div class="spec-row"><span class="spec-label" data-i18n="s4_l">Место на диске</span><span data-i18n="s4_v">От 25 ГБ свободного пространства</span></div>
-        <div class="spec-row"><span class="spec-label" data-i18n="s5_l">Размер образа</span><span data-i18n="s5_v">3.0 ГБ (bobrOS 64 Bit-26H1)</span></div>
-    </div>
-</section>
+    <section class="hero">
+        <div class="mascot-stage">
+            <svg class="side-flag left active-flag-svg"><use href="#flag-ru"></use></svg>
 
-<footer>
-    <span data-i18n="footer">© 2026 bobrOS Team. Все права защищены.</span>
-</footer>
+            <div class="bobr-mascot" id="mascot" title="bobrOS">
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <circle class="bobr-ring" cx="100" cy="100" r="84" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="16 8 4 8" opacity="0.85"/>
+                    <ellipse cx="148" cy="138" rx="28" ry="18" transform="rotate(-25 148 138)" fill="#2d2926" stroke="#1a1715" stroke-width="3"/>
+                    <circle cx="62" cy="60" r="14" fill="#5c331c" stroke="#381d0e" stroke-width="3"/>
+                    <circle cx="138" cy="60" r="14" fill="#5c331c" stroke="#381d0e" stroke-width="3"/>
+                    <circle cx="100" cy="100" r="52" fill="#7a4628" stroke="#4e2b18" stroke-width="3"/>
+                    <circle cx="84" cy="104" r="15" fill="#c98e68"/>
+                    <circle cx="116" cy="104" r="15" fill="#c98e68"/>
+                    <g class="bobr-teeth">
+                        <rect x="91" y="112" width="8" height="14" rx="2" fill="#ffffff" stroke="#ccc" stroke-width="1"/>
+                        <rect x="101" y="112" width="8" height="14" rx="2" fill="#ffffff" stroke="#ccc" stroke-width="1"/>
+                    </g>
+                    <ellipse cx="100" cy="96" rx="10" ry="7" fill="#1e1410"/>
+                    <ellipse cx="97" cy="94" rx="3" ry="2" fill="#ffffff" opacity="0.7"/>
+                    <path d="M58 76 L142 76 L136 92 L105 92 L100 86 L95 92 L64 92 Z" fill="var(--accent)" stroke="#0d1117" stroke-width="3"/>
+                    <line x1="68" y1="80" x2="88" y2="88" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+                    <line x1="112" y1="80" x2="130" y2="88" stroke="#ffffff" stroke-width="2" opacity="0.8"/>
+                    <g transform="translate(70, 134) rotate(-4)">
+                        <rect x="-2" y="-2" width="64" height="44" rx="4" fill="#0d1117" stroke="var(--accent)" stroke-width="2"/>
+                        <use class="active-flag-use" href="#flag-ru" x="0" y="0" width="60" height="40"></use>
+                    </g>
+                </svg>
+            </div>
+
+            <svg class="side-flag right active-flag-svg"><use href="#flag-ru"></use></svg>
+        </div>
+
+        <div class="badge-theme">
+            <svg class="flag-icon active-flag-svg"><use href="#flag-ru"></use></svg>
+            <span data-i18n="badge">РУССКАЯ НОРМАЛЬНАЯ СИСТЕМА</span>
+        </div>
+
+        <h1 data-i18n="hero_title">Операционная система, созданная для скорости и работы</h1>
+        <p data-i18n="hero_desc">bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.</p>
+
+        <div class="buttons" id="download">
+            <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" class="btn-theme">
+                <svg class="flag-icon active-flag-svg"><use href="#flag-ru"></use></svg>
+                <span data-i18n="btn_release">релизы бобр ос</span>
+            </a>
+            <a href="https://github.com/M1ZZL1/bobr-os-team" class="btn-theme">
+                <svg class="flag-icon active-flag-svg"><use href="#flag-ru"></use></svg>
+                <span data-i18n="btn_repo">Репозиторий проекта</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="section" id="features">
+        <h2 data-i18n="why_title">Почему bobrOS?</h2>
+        <div class="grid">
+            <div class="card tilt-card">
+                <h3 data-i18n="f1_title">Максимальная скорость</h3>
+                <p data-i18n="f1_desc">Оптимизированные службы и минимум фоновых процессов обеспечивают мгновенный отклик даже на не самом новом железе.</p>
+            </div>
+            <div class="card tilt-card">
+                <h3 data-i18n="f2_title">Всё готово из коробки</h3>
+                <p data-i18n="f2_desc">Не нужно тратить часы на настройку после установки — базовые утилиты, драйверы и среда уже интегрированы в образ.</p>
+            </div>
+            <div class="card tilt-card">
+                <h3 data-i18n="f3_title">Надёжность и контроль</h3>
+                <p data-i18n="f3_desc">Построена на проверенной базе Linux x86_64 без принудительных обновлений и телеметрии.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section" id="specs">
+        <h2 data-i18n="specs_title">Системные требования</h2>
+        <div class="specs-box">
+            <div class="spec-row"><span class="spec-label" data-i18n="s1_l">Архитектура</span><span data-i18n="s1_v">64-bit (x86_64)</span></div>
+            <div class="spec-row"><span class="spec-label" data-i18n="s2_l">Процессор</span><span data-i18n="s2_v">2 ядра от 2.0 ГГц и выше</span></div>
+            <div class="spec-row"><span class="spec-label" data-i18n="s3_l">Оперативная память</span><span data-i18n="s3_v">Минимум 4 ГБ (рекомендуется 8 ГБ)</span></div>
+            <div class="spec-row"><span class="spec-label" data-i18n="s4_l">Место на диске</span><span data-i18n="s4_v">От 25 ГБ свободного пространства</span></div>
+            <div class="spec-row"><span class="spec-label" data-i18n="s5_l">Размер образа</span><span data-i18n="s5_v">3.0 ГБ (bobrOS 64 Bit-26H1)</span></div>
+        </div>
+    </section>
+
+    <footer>
+        <span data-i18n="footer">© 2026 bobrOS Team. Все права защищены.</span>
+    </footer>
+</div>
 
 <script>
-    // 1. Проверка региона (Украина)
-    function blockIfRestricted() {
-        const tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || "").toLowerCase();
-        const langs = (navigator.languages || [navigator.language || ""]).join(",").toLowerCase();
-        const blockedZones = ["europe/kiev", "europe/kyiv", "europe/uzhgorod", "europe/zaporozhye", "europe/simferopol"];
-
-        if (blockedZones.includes(tz) || langs.includes("uk")) {
-            document.getElementById("geo-block-screen").style.display = "flex";
-            return true;
-        }
-        return false;
+    // Проверка региона (Украина)
+    function showBlockScreen() {
+        document.getElementById('main-app').style.display = 'none';
+        document.getElementById('geo-block').style.display = 'flex';
     }
 
-    if (!blockIfRestricted()) {
-        fetch("https://ipapi.co/json/")
-            .then(r => r.json())
-            .then(data => {
-                if (data && data.country_code === "UA") {
-                    document.getElementById("geo-block-screen").style.display = "flex";
+    (function checkRegion() {
+        try {
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+            const langs = (navigator.languages || [navigator.language || '']).join(',').toLowerCase();
+            if (tz.includes('Kiev') || tz.includes('Kyiv') || tz.includes('Uzhgorod') || tz.includes('Zaporozhye') || langs.includes('uk')) {
+                showBlockScreen();
+                return;
+            }
+        } catch (e) {}
+
+        fetch('https://ipapi.co/country/')
+            .then(r => r.text())
+            .then(code => {
+                if (code && code.trim().toUpperCase() === 'UA') {
+                    showBlockScreen();
                 }
             })
             .catch(() => {});
-    }
+    })();
 
-    // 2. Переводы и переключение тем
-    const i18n = {
+    // Словари локализации и настройки тем
+    const themes = {
         ru: {
-            flag: "#flag-ru",
-            colors: ["#ffffff", "#0039a6", "#d52b1e"],
-            nav_features: "Особенности",
-            nav_specs: "Требования",
-            nav_download: "Скачать",
-            badge: "РУССКАЯ НОРМАЛЬНАЯ СИСТЕМА",
-            hero_title: "Операционная система, созданная для скорости и работы",
-            hero_desc: "bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.",
-            btn_releases: "релизы бобр ос",
-            btn_repo: "Репозиторий проекта",
-            sec_why: "Почему bobrOS?",
-            f1_title: "Максимальная скорость",
-            f1_desc: "Оптимизированные службы и минимум фоновых процессов обеспечивают мгновенный отклик даже на не самом новом железе.",
-            f2_title: "Всё готово из коробки",
-            f2_desc: "Не нужно тратить часы на настройку после установки — базовые утилиты, драйверы и среда уже интегрированы в образ.",
-            f3_title: "Надёжность и контроль",
-            f3_desc: "Построена на проверенной базе Linux x86_64 без принудительных обновлений и телеметрии.",
-            sec_specs: "Системные требования",
-            s1_l: "Архитектура", s1_v: "64-bit (x86_64)",
-            s2_l: "Процессор", s2_v: "2 ядра от 2.0 ГГц и выше",
-            s3_l: "Оперативная память", s3_v: "Минимум 4 ГБ (рекомендуется 8 ГБ)",
-            s4_l: "Место на диске", s4_v: "От 25 ГБ свободного пространства",
-            s5_l: "Размер образа", s5_v: "3.0 ГБ (bobrOS 64 Bit-26H1)",
-            footer: "© 2026 bobrOS Team. Все права защищены."
+            flag: '#flag-ru',
+            bodyClass: 'theme-ru',
+            colors: ['#ffffff', '#0039a6', '#d52b1e', '#f78166'],
+            lineColor: '0, 57, 166',
+            text: {
+                nav_features: 'Особенности',
+                nav_specs: 'Требования',
+                nav_download: 'Скачать',
+                badge: 'РУССКАЯ НОРМАЛЬНАЯ СИСТЕМА',
+                hero_title: 'Операционная система, созданная для скорости и работы',
+                hero_desc: 'bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.',
+                btn_release: 'релизы бобр ос',
+                btn_repo: 'Репозиторий проекта',
+                why_title: 'Почему bobrOS?',
+                f1_title: 'Максимальная скорость',
+                f1_desc: 'Оптимизированные службы и минимум фоновых процессов обеспечивают мгновенный отклик даже на не самом новом железе.',
+                f2_title: 'Всё готово из коробки',
+                f2_desc: 'Не нужно тратить часы на настройку после установки — базовые утилиты, драйверы и среда уже интегрированы в образ.',
+                f3_title: 'Надёжность и контроль',
+                f3_desc: 'Построена на проверенной базе Linux x86_64 без принудительных обновлений и телеметрии.',
+                specs_title: 'Системные требования',
+                s1_l: 'Архитектура', s1_v: '64-bit (x86_64)',
+                s2_l: 'Процессор', s2_v: '2 ядра от 2.0 ГГц и выше',
+                s3_l: 'Оперативная память', s3_v: 'Минимум 4 ГБ (рекомендуется 8 ГБ)',
+                s4_l: 'Место на диске', s4_v: 'От 25 ГБ свободного пространства',
+                s5_l: 'Размер образа', s5_v: '3.0 ГБ (bobrOS 64 Bit-26H1)',
+                footer: '© 2026 bobrOS Team. Все права защищены.'
+            }
         },
         kz: {
-            flag: "#flag-kz",
-            colors: ["#00afca", "#fec50c", "#ffffff"],
-            nav_features: "Ерекшеліктері",
-            nav_specs: "Талаптар",
-            nav_download: "Жүктеу",
-            badge: "ҚАЗАҚША ҚАЛЫПТЫ ЖҮЙЕ",
-            hero_title: "Жылдамдық пен жұмысқа арналған операциялық жүйе",
-            hero_desc: "bobrOS — артық қоқыссыз, әзірлеу құралдары алдын ала орнатылған, жоғары жылдамдықты және таза интерфейсі бар арнайы дистрибутив.",
-            btn_releases: "bobrOS шығарылымдары",
-            btn_repo: "Жоба репозиторийі",
-            sec_why: "Неліктен bobrOS?",
-            f1_title: "Максималды жылдамдық",
-            f1_desc: "Оңтайландырылған қызметтер мен минималды фондық процестер тіпті ескі құрылғыларда да лезде жауап беруді қамтамасыз етеді.",
-            f2_title: "Бәрі дайын күйінде",
-            f2_desc: "Орнатудан кейін баптауға сағаттап уақыт жұмсаудың қажеті жоқ — негізгі утилиталар мен драйверлер жүйеге енгізілген.",
-            f3_title: "Сенімділік пен бақылау",
-            f3_desc: "Мәжбүрлі жаңартуларсыз және телеметриясыз тексерілген Linux x86_64 базасында құрылған.",
-            sec_specs: "Жүйелік талаптар",
-            s1_l: "Архитектура", s1_v: "64-bit (x86_64)",
-            s2_l: "Процессор", s2_v: "2.0 ГГц және одан жоғары 2 ядро",
-            s3_l: "Жедел жады", s3_v: "Кемінде 4 ГБ (8 ГБ ұсынылады)",
-            s4_l: "Дискідегі орын", s4_v: "25 ГБ бос орыннан бастап",
-            s5_l: "Образ өлшемі", s5_v: "3.0 ГБ (bobrOS 64 Bit-26H1)",
-            footer: "© 2026 bobrOS Team. Барлық құқықтар қорғалған."
+            flag: '#flag-kz',
+            bodyClass: 'theme-kz',
+            colors: ['#00afca', '#fec50c', '#ffffff'],
+            lineColor: '0, 175, 202',
+            text: {
+                nav_features: 'Ерекшеліктері',
+                nav_specs: 'Талаптар',
+                nav_download: 'Жүктеу',
+                badge: 'ҚАЗАҚША ҚАЛЫПТЫ ЖҮЙЕ',
+                hero_title: 'Жылдамдық пен жұмысқа арналған операциялық жүйе',
+                hero_desc: 'bobrOS — артық қоқыссыз, әзірлеу құралдары алдын ала орнатылған, жоғары жылдамдықты және таза интерфейсті кастомды дистрибутив.',
+                btn_release: 'bobrOS релиздері',
+                btn_repo: 'Жоба репозиторийі',
+                why_title: 'Неліктен bobrOS?',
+                f1_title: 'Максималды жылдамдық',
+                f1_desc: 'Оңтайландырылған қызметтер мен ең аз фондық процестер ескі компьютерлерде де лезде жауап беруді қамтамасыз етеді.',
+                f2_title: 'Бәрі бірден дайын',
+                f2_desc: 'Орнатқаннан кейін баптауға уақыт жұмсаудың қажеті жоқ — негізгі утилиталар мен драйверлер образға енгізілген.',
+                f3_title: 'Сенімділік пен бақылау',
+                f3_desc: 'Мәжбүрлі жаңартуларсыз және телеметриясыз тексерілген Linux x86_64 базасында құрылған.',
+                specs_title: 'Жүйелік талаптар',
+                s1_l: 'Архитектура', s1_v: '64-bit (x86_64)',
+                s2_l: 'Процессор', s2_v: '2.0 ГГц және одан жоғары 2 ядро',
+                s3_l: 'Жедел жад', s3_v: 'Кемінде 4 ГБ (8 ГБ ұсынылады)',
+                s4_l: 'Дискідегі орын', s4_v: '25 ГБ бос орыннан бастап',
+                s5_l: 'Образ өлшемі', s5_v: '3.0 ГБ (bobrOS 64 Bit-26H1)',
+                footer: '© 2026 bobrOS Team. Барлық құқықтар қорғалған.'
+            }
         },
         en: {
-            flag: "#flag-en",
-            colors: ["#012169", "#c8102e", "#ffffff"],
-            nav_features: "Features",
-            nav_specs: "Requirements",
-            nav_download: "Download",
-            badge: "PROPER NORMAL SYSTEM",
-            hero_title: "An operating system built for speed and productivity",
-            hero_desc: "bobrOS is a bloat-free custom distribution with pre-installed developer tools, instant responsiveness, and a clean interface.",
-            btn_releases: "bobrOS releases",
-            btn_repo: "Project Repository",
-            sec_why: "Why bobrOS?",
-            f1_title: "Maximum Speed",
-            f1_desc: "Optimized services and minimal background processes ensure instant response even on older hardware.",
-            f2_title: "Ready Out of the Box",
-            f2_desc: "No need to spend hours configuring after install — essential utilities, drivers, and environment are built right in.",
-            f3_title: "Reliability & Control",
-            f3_desc: "Built on a proven Linux x86_64 base with zero forced updates and zero telemetry.",
-            sec_specs: "System Requirements",
-            s1_l: "Architecture", s1_v: "64-bit (x86_64)",
-            s2_l: "Processor", s2_v: "Dual-core 2.0 GHz or higher",
-            s3_l: "Memory (RAM)", s3_v: "4 GB minimum (8 GB recommended)",
-            s4_l: "Storage", s4_v: "At least 25 GB of free space",
-            s5_l: "ISO Size", s5_v: "3.0 GB (bobrOS 64 Bit-26H1)",
-            footer: "© 2026 bobrOS Team. All rights reserved."
+            flag: '#flag-en',
+            bodyClass: 'theme-en',
+            colors: ['#012169', '#c8102e', '#ffffff', '#00d2ff'],
+            lineColor: '0, 210, 255',
+            text: {
+                nav_features: 'Features',
+                nav_specs: 'Requirements',
+                nav_download: 'Download',
+                badge: 'PROPER NORMAL SYSTEM',
+                hero_title: 'An operating system built for pure speed and productivity',
+                hero_desc: 'bobrOS is a bloat-free custom Linux distribution with pre-installed developer tools, instant responsiveness, and a clean interface.',
+                btn_release: 'bobrOS Releases',
+                btn_repo: 'Project Repository',
+                why_title: 'Why bobrOS?',
+                f1_title: 'Maximum Speed',
+                f1_desc: 'Optimized services and minimal background processes ensure snappy performance even on older hardware.',
+                f2_title: 'Ready Out of the Box',
+                f2_desc: 'No need to spend hours configuring after installation — essential utilities, drivers, and tools are already built in.',
+                f3_title: 'Reliability & Control',
+                f3_desc: 'Built on a rock-solid Linux x86_64 base with zero forced updates and no telemetry.',
+                specs_title: 'System Requirements',
+                s1_l: 'Architecture', s1_v: '64-bit (x86_64)',
+                s2_l: 'Processor', s2_v: 'Dual-core 2.0 GHz or higher',
+                s3_l: 'Memory (RAM)', s3_v: '4 GB minimum (8 GB recommended)',
+                s4_l: 'Storage', s4_v: 'At least 25 GB of free space',
+                s5_l: 'ISO Size', s5_v: '3.0 GB (bobrOS 64 Bit-26H1)',
+                footer: '© 2026 bobrOS Team. All rights reserved.'
+            }
         },
         by: {
-            flag: "#flag-by",
-            colors: ["#d22730", "#009739", "#ffffff"],
-            nav_features: "Асаблівасці",
-            nav_specs: "Патрабаванні",
-            nav_download: "Спампаваць",
-            badge: "БЕЛАРУСКАЯ НАРМАЛЬНАЯ СІСТЭМА",
-            hero_title: "Аперацыйная сістэма, створаная для хуткасці і працы",
-            hero_desc: "bobrOS — кастомны дыстрыбутыў без лішняга смецця, з прадусталяванымі інструментамі распрацоўкі, высокай спагадлівасцю і чыстым інтэрфейсам.",
-            btn_releases: "рэлізы бобр ас",
-            btn_repo: "Рэпазіторый праекта",
-            sec_why: "Чаму bobrOS?",
-            f1_title: "Максімальная хуткасць",
-            f1_desc: "Аптымізаваныя службы і мінімум фонавых працэсаў забяспечваюць імгненны водгук нават на не самым новым жалезе.",
-            f2_title: "Усё гатова з скрынкі",
-            f2_desc: "Не трэба марнаваць гадзіны на наладу пасля ўстаноўкі — базавыя ўтыліты, драйверы і асяроддзе ўжо інтэграваныя ў вобраз.",
-            f3_title: "Надзейнасць і кантроль",
-            f3_desc: "Пабудавана на праверанай базе Linux x86_64 без прымусовых абнаўленняў і тэлеметрыі.",
-            sec_specs: "Сістэмныя патрабаванні",
-            s1_l: "Архітэктура", s1_v: "64-bit (x86_64)",
-            s2_l: "Працэсар", s2_v: "2 ядры ад 2.0 ГГц і вышэй",
-            s3_l: "Аператыўная памяць", s3_v: "Мінімум 4 ГБ (рэкамендуецца 8 ГБ)",
-            s4_l: "Месца на дыску", s4_v: "Ад 25 ГБ вольнай прасторы",
-            s5_l: "Памер вобраза", s5_v: "3.0 ГБ (bobrOS 64 Bit-26H1)",
-            footer: "© 2026 bobrOS Team. Усе правы абаронены."
+            flag: '#flag-by',
+            bodyClass: 'theme-by',
+            colors: ['#d22730', '#00af66', '#ffffff'],
+            lineColor: '0, 175, 102',
+            text: {
+                nav_features: 'Асаблівасці',
+                nav_specs: 'Патрабаванні',
+                nav_download: 'Спампаваць',
+                badge: 'БЕЛАРУСКАЯ НАРМАЛЬНАЯ СІСТЭМА',
+                hero_title: 'Аперацыйная сістэма, створаная для хуткасці і працы',
+                hero_desc: 'bobrOS — кастамны дыстрыбутыў без лішняга смецця, з прадусталяванымі інструментамі распрацоўкі, высокай хуткасцю і чыстым інтэрфейсам.',
+                btn_release: 'рэлізы бобр ас',
+                btn_repo: 'Рэпазіторый праекта',
+                why_title: 'Чаму bobrOS?',
+                f1_title: 'Максімальная хуткасць',
+                f1_desc: 'Аптымізаваныя службы і мінімум фонавых працэсаў забяспечваюць імгненны водгук нават на не самым новым жалезе.',
+                f2_title: 'Усё гатова з скрынкі',
+                f2_desc: 'Не трэба марнаваць гадзіны на настройку пасля ўстаноўкі — базавыя ўтыліты, драйверы і асяроддзе ўжо інтэграваныя ў вобраз.',
+                f3_title: 'Надзейнасць і кантроль',
+                f3_desc: 'Пабудавана на праверанай базе Linux x86_64 без прымусовых абнаўленняў і тэлеметрыі.',
+                specs_title: 'Сістэмныя патрабаванні',
+                s1_l: 'Архітэктура', s1_v: '64-bit (x86_64)',
+                s2_l: 'Працэсар', s2_v: '2 ядры ад 2.0 ГГц і вышэй',
+                s3_l: 'Аператыўная памяць', s3_v: 'Мінімум 4 ГБ (рэкамендуецца 8 ГБ)',
+                s4_l: 'Месца на дыску', s4_v: 'Ад 25 ГБ вольнай прасторы',
+                s5_l: 'Памер вобраза', s5_v: '3.0 ГБ (bobrOS 64 Bit-26H1)',
+                footer: '© 2026 bobrOS Team. Усе правы абаронены.'
+            }
         }
     };
 
-    let activeColors = i18n.ru.colors;
+    let currentTheme = themes.ru;
 
-    function setLanguage(lang) {
-        const dict = i18n[lang];
-        if (!dict) return;
+    function setLanguage(langKey) {
+        const theme = themes[langKey];
+        if (!theme) return;
+        currentTheme = theme;
 
-        document.body.className = "theme-" + lang;
-        document.documentElement.lang = lang;
-        activeColors = dict.colors;
+        document.body.className = theme.bodyClass;
+        document.documentElement.lang = langKey;
 
-        document.querySelectorAll(".active-flag-use").forEach(el => {
-            el.setAttribute("href", dict.flag);
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === langKey);
         });
 
-        document.querySelectorAll("[data-i18n]").forEach(el => {
-            const key = el.getAttribute("data-i18n");
-            if (dict[key]) el.textContent = dict[key];
+        document.querySelectorAll('.active-flag-svg use, .active-flag-use').forEach(el => {
+            el.setAttribute('href', theme.flag);
         });
 
-        document.querySelectorAll(".lang-btn").forEach(btn => {
-            btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (theme.text[key]) {
+                el.textContent = theme.text[key];
+            }
         });
 
-        particles.forEach((p, idx) => {
-            p.color = activeColors[idx % activeColors.length];
+        particles.forEach(p => {
+            p.color = theme.colors[Math.floor(Math.random() * theme.colors.length)];
         });
     }
 
-    document.querySelectorAll(".lang-btn").forEach(btn => {
-        btn.addEventListener("click", (e) => {
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
             e.stopPropagation();
-            setLanguage(btn.getAttribute("data-lang"));
+            setLanguage(btn.dataset.lang);
+            spawnBoom(e.clientX, e.clientY);
         });
     });
 
-    // 3. Анимация частиц на Canvas
-    const canvas = document.getElementById("xeon-canvas");
-    const ctx = canvas.getContext("2d");
+    // Фоновый Canvas с частицами
+    const canvas = document.getElementById('xeon-canvas');
+    const ctx = canvas.getContext('2d');
     let width, height;
 
     function resize() {
         width = canvas.width = window.innerWidth;
         height = canvas.height = window.innerHeight;
     }
-    window.addEventListener("resize", resize);
+    window.addEventListener('resize', resize);
     resize();
 
     const mouse = { x: -1000, y: -1000 };
-    window.addEventListener("mousemove", e => {
+    window.addEventListener('mousemove', (e) => {
         mouse.x = e.clientX;
         mouse.y = e.clientY;
     });
@@ -822,26 +845,29 @@
             vx: (Math.random() - 0.5) * 2.4,
             vy: (Math.random() - 0.5) * 2.4,
             size: Math.random() * 2.5 + 1.2,
-            color: activeColors[i % activeColors.length]
+            color: currentTheme.colors[Math.floor(Math.random() * currentTheme.colors.length)]
         });
     }
 
     function spawnBoom(x, y) {
-        for (let i = 0; i < 36; i++) {
+        for (let i = 0; i < 40; i++) {
             const angle = Math.random() * Math.PI * 2;
             const speed = Math.random() * 9 + 2;
             booms.push({
-                x, y,
+                x: x,
+                y: y,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 alpha: 1,
-                size: Math.random() * 4.5 + 2.5,
-                color: activeColors[Math.floor(Math.random() * activeColors.length)]
+                size: Math.random() * 5 + 3,
+                color: currentTheme.colors[Math.floor(Math.random() * currentTheme.colors.length)]
             });
         }
     }
 
-    window.addEventListener("click", e => spawnBoom(e.clientX, e.clientY));
+    window.addEventListener('click', (e) => {
+        spawnBoom(e.clientX, e.clientY);
+    });
 
     function animate() {
         ctx.clearRect(0, 0, width, height);
@@ -872,13 +898,11 @@
                 const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
                 if (dist < 115) {
                     ctx.beginPath();
-                    ctx.strokeStyle = p.color;
-                    ctx.globalAlpha = (1 - dist / 115) * 0.45;
-                    ctx.lineWidth = 0.8;
+                    ctx.strokeStyle = `rgba(${currentTheme.lineColor}, ${1 - dist / 115})`;
+                    ctx.lineWidth = 0.7;
                     ctx.moveTo(p.x, p.y);
                     ctx.lineTo(p2.x, p2.y);
                     ctx.stroke();
-                    ctx.globalAlpha = 1;
                 }
             }
         }
@@ -908,8 +932,8 @@
     }
     animate();
 
-    document.querySelectorAll(".tilt-card").forEach(card => {
-        card.addEventListener("mousemove", e => {
+    document.querySelectorAll('.tilt-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -917,8 +941,8 @@
             const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 10;
             card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
         });
-        card.addEventListener("mouseleave", () => {
-            card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
         });
     });
 </script>
