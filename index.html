@@ -81,29 +81,30 @@
             margin: 0 auto 36px;
         }
         .buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-        .btn-kz {
-            background-color: #00afca;
-            background-image: 
-                linear-gradient(rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.28)),
-                url("data:image/svg+xml,%3Csvg xmlns='http://w3.org' viewBox='0 0 200 100'%3E%3Crect width='200' height='100' fill='%2300afca'/%3E%3Cg fill='%23fec50c'%3E%3Cpath d='M12 5h6v90h-6z' opacity='0.3'/%3E%3Cpath d='M15 8l4 6-4 6-4-6zm0 16l4 6-4 6-4-6zm0 16l4 6-4 6-4-6zm0 16l4 6-4 6-4-6zm0 16l4 6-4 6-4-6zm0 16l4 6-4 6-4-6z'/%3E%3Cpath d='M8 16l3 4-3 4-3-4zm14 0l3 4-3 4-3-4zM8 32l3 4-3 4-3-4zm14 0l3 4-3 4-3-4zM8 48l3 4-3 4-3-4zm14 0l3 4-3 4-3-4zM8 64l3 4-3 4-3-4zm14 0l3 4-3 4-3-4zM8 80l3 4-3 4-3-4zm14 0l3 4-3 4-3-4z'/%3E%3Ccircle cx='106' cy='44' r='13'/%3E%3Cg stroke='%23fec50c' stroke-width='2' stroke-linecap='round'%3E%3Cline x1='106' y1='22' x2='106' y2='27'/%3E%3Cline x1='106' y1='61' x2='106' y2='66'/%3E%3Cline x1='84' y1='44' x2='89' y2='44'/%3E%3Cline x1='123' y1='44' x2='128' y2='44'/%3E%3Cline x1='90.5' y1='28.5' x2='94' y2='32'/%3E%3Cline x1='118' y1='56' x2='121.5' y2='59.5'/%3E%3Cline x1='121.5' y1='28.5' x2='118' y2='32'/%3E%3Cline x1='94' y1='56' x2='90.5' y2='59.5'/%3E%3Cline x1='98' y1='23.5' x2='100' y2='28'/%3E%3Cline x1='114' y1='23.5' x2='112' y2='28'/%3E%3Cline x1='85.5' y1='36' x2='90' y2='38'/%3E%3Cline x1='126.5' y1='36' x2='122' y2='38'/%3E%3Cline x1='85.5' y1='52' x2='90' y2='50'/%3E%3Cline x1='126.5' y1='52' x2='122' y2='50'/%3E%3C/g%3E%3Cpath d='M82 65c8 7 18 9 24 6 6 3 16 1 24-6-7 3-15 3-21 0l-3 5-3-5c-6 3-14 3-21 0z'/%3E%3Cpath d='M86 68c6 4 13 5 18 3m20-3c-6 4-13 5-18 3' stroke='%23fec50c' stroke-width='1.5' fill='none'/%3E%3C/g%3E%3C/svg%3E");
-            background-size: 100% 100%;
-            background-position: center;
-            background-repeat: no-repeat;
+        .btn-ru {
+            background: linear-gradient(
+                to bottom,
+                #ffffff 0%,
+                #ffffff 33.33%,
+                #0039a6 33.33%,
+                #0039a6 66.66%,
+                #d52b1e 66.66%,
+                #d52b1e 100%
+            );
             color: #ffffff;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.95), 0 0 10px rgba(0, 0, 0, 0.95);
-            padding: 15px 34px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.95), 0 0 8px rgba(0, 0, 0, 0.85);
+            padding: 14px 28px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 700;
             font-size: 1rem;
-            border: 1px solid rgba(254, 197, 12, 0.75);
-            box-shadow: 0 4px 14px rgba(0, 175, 202, 0.4);
-            transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .btn-kz:hover {
+        .btn-ru:hover {
             transform: translateY(-2px);
-            filter: brightness(1.1);
-            box-shadow: 0 6px 20px rgba(0, 175, 202, 0.65);
+            box-shadow: 0 6px 20px rgba(0, 57, 166, 0.5);
         }
         .section {
             max-width: 1100px;
@@ -159,9 +160,9 @@
 <header>
     <div class="logo">🦫 bobr<span>OS</span></div>
     <nav>
-        <a href="https://github.com">Особенности</a>
-        <a href="https://github.com">Требования</a>
-        <a href="https://github.com">Скачать</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Особенности</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Требования</a>
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0">Скачать</a>
     </nav>
 </header>
 
@@ -170,10 +171,10 @@
     <h1>Операционная система, созданная для скорости и работы</h1>
     <p>bobrOS — кастомный дистрибутив без лишнего мусора, с предустановленными инструментами разработки, высокой отзывчивостью и чистым интерфейсом.</p>
     <div class="buttons" id="download">
-        <a href="https://github.com" class="btn-kz">
+        <a href="https://github.com/M1ZZL1/bobr-os-team/releases/tag/v1.0" class="btn-ru">
             релизы бобр ос
         </a>
-        <a href="https://github.com" class="btn-kz">
+        <a href="https://github.com/M1ZZL1/bobr-os-team" class="btn-ru">
             Репозиторий проекта
         </a>
     </div>
